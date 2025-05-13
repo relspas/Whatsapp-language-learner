@@ -54,9 +54,9 @@ def count_expression_frequencies(messages, min_length=5):
     return dict(expression_freq)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or (len(sys.argv) == 2 and sys.argv[1] not in ['-f']):
+    if len(sys.argv) < 2 or (len(sys.argv) == 2 and sys.argv[1] not in ['-f', '-w', '-e']):
         if len(sys.argv) != 2:
-            print("Usage: python extract_user_wordfreq.py <path_to_text_file> or -f <path_to_folder>")
+            print("Usage: python extract_user_wordfreq.py <path_to_text_file> or -f <path_to_folder> [-w <num_words>] [-e <num_expressions>]")
             sys.exit(1)
         file_path = sys.argv[1]
         if not os.path.isfile(file_path):
@@ -64,8 +64,8 @@ if __name__ == "__main__":
             sys.exit(1)
         files = [file_path]
     elif sys.argv[1] == '-f':
-        if len(sys.argv) != 3:
-            print("Usage: python extract_user_wordfreq.py -f <path_to_folder>")
+        if len(sys.argv) < 3:
+            print("Usage: python extract_user_wordfreq.py -f <path_to_folder> [-w <num_words>] [-e <num_expressions>]")
             sys.exit(1)
         folder_path = sys.argv[2]
         if not os.path.isdir(folder_path):
@@ -76,8 +76,29 @@ if __name__ == "__main__":
             print(f"No text files found in folder: {folder_path}")
             sys.exit(1)
     else:
-        print("Usage: python extract_user_wordfreq.py <path_to_text_file> or -f <path_to_folder>")
+        print("Usage: python extract_user_wordfreq.py <path_to_text_file> or -f <path_to_folder> [-w <num_words>] [-e <num_expressions>]")
         sys.exit(1)
+
+    # Default values for number of words and expressions
+    num_words = 10
+    num_expressions = 10
+
+    # Parse optional flags for -w and -e
+    if '-w' in sys.argv:
+        try:
+            num_words_index = sys.argv.index('-w') + 1
+            num_words = int(sys.argv[num_words_index])
+        except (ValueError, IndexError):
+            print("Error: Please provide a valid number after the -w flag.")
+            sys.exit(1)
+
+    if '-e' in sys.argv:
+        try:
+            num_expressions_index = sys.argv.index('-e') + 1
+            num_expressions = int(sys.argv[num_expressions_index])
+        except (ValueError, IndexError):
+            print("Error: Please provide a valid number after the -e flag.")
+            sys.exit(1)
 
     all_messages = []
     all_names = set()
@@ -98,7 +119,7 @@ if __name__ == "__main__":
     expression_frequencies = count_expression_frequencies(selected_messages)
 
     print(f"\nExpression frequencies for {selected_name}:\n")
-    for expression, count in sorted(expression_frequencies.items(), key=lambda x: -x[1])[:10]:
+    for expression, count in sorted(expression_frequencies.items(), key=lambda x: -x[1])[:num_expressions]:
         # Translate the expression to Hebrew
         translated_expression = translator.translate(expression, src='en', dest='he').text
         print(f"{expression} : {translated_expression[::-1]} : {count}")
@@ -107,6 +128,6 @@ if __name__ == "__main__":
     frequencies = count_word_frequencies(selected_messages)
 
     print(f"\nWord frequencies for {selected_name}:\n")
-    for word, count in sorted(frequencies.items(), key=lambda x: -x[1])[:10]:
+    for word, count in sorted(frequencies.items(), key=lambda x: -x[1])[:num_words]:
         translated_expression = translator.translate(word, src='en', dest='he').text
         print(f"{word} : {translated_expression[::-1]} : {count}")
