@@ -1,6 +1,5 @@
-# WhatsApp Word Frequency Extractor
-
-This Python script analyzes WhatsApp chat exports and computes word or expression frequencies. It can process a single text file or a folder of multiple exports.
+# WhatsApp Language Learner
+This tool analyzes WhatsApp chat exports and computes word or expression frequencies. It can process a single Whatsapp chat or a folder of multiple exported chats.
 
 ## 📦 Setup Instructions
 
@@ -22,6 +21,7 @@ Repeat as needed for multiple chats.
 git clone https://github.com/yourusername/whatsapp-wordfreq.git
 cd whatsapp-wordfreq
 ```
+Copy the folder of chats into the current folder.
 
 ### 4. Install Requirements
 Make sure you have Python 3 installed. Then run:
